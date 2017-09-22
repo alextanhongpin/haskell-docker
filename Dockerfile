@@ -1,32 +1,15 @@
-FROM alpine:edge as build
-RUN    echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
-    && apk update \
-    && apk add wget ghc ca-certificates musl-dev shadow linux-headers zlib-dev \
-    && update-ca-certificates
-RUN wget -qO- https://get.haskellstack.org/ | sh
-RUN adduser -h /home/stack stack -D
-USER stack
-RUN    stack config set system-ghc --global true \
-    && mkdir -p /home/stack/.stack/global-project/ \
-    && echo 'resolver: lts-8.8' > /home/stack/.stack/global-project/stack.yaml \
-    && stack setup
-USER root
+# Use Alpine Linux as base image
+FROM alpine:latest
 
-RUN mkdir /build
-COPY stack.yaml /build
-RUN    cd /build \
-    && sed -i 's/enable: true/enable: false/' stack.yaml \
-    && stack config set system-ghc --global true \
-    && stack setup
-COPY haskell-docker.cabal /build
-RUN cd /build \
-    && stack build --dependencies-only --test
-COPY . /build
-RUN cd /build \
-    && sed -i 's/enable: true/enable: false/' stack.yaml \
-    && stack build --test \
-    && stack install
+# Install libpq and gmp dependencies (dynamic libraries required by the project)
+RUN apk update && apk add libpq gmp
 
-FROM scratch
 
-COPY --from=build /root/.local/bin/haskell-docker /
+# Copy the prebuilt binary from stack-work into the container
+# (substitute your project name for 'example')
+COPY .stack-work/docker/_home/.local/bin/haskell-docker-exe /usr/local/bin/haskell-docker-exe
+# COPY .stack-work/image/0/usr/local/bin/haskell-docker-exe /usr/local/bin/haskell-docker-exe
+
+# Run the binary on container start
+# (substitute your project name for 'example')
+CMD ["haskell-docker-exe"]

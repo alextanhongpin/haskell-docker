@@ -56,7 +56,8 @@ extra-package-dbs: []
 #
 # Override the architecture used by stack, especially useful on Windows
 # arch: i386
-# arch: x86_64
+arch: x86_64
+# os: linux
 #
 # Extra directories used by stack for building
 # extra-include-dirs: [/path/to/dir]
@@ -70,8 +71,17 @@ extra-package-dbs: []
 #   containers:
 #     - 
 #       base
-
+# system-ghc: false
 docker:
   enable: true
-  image: alpine-ghc
-  stack-exe: download
+  set-user: true
+
+image:
+  containers:
+    - 
+      name: haskell-docker
+      base: alpine:latest
+      add:
+        .stack-work/docker/_home/.local/bin/: /usr/local/bin/
+      entrypoints: 
+      - haskell-docker-exe
