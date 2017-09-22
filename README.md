@@ -15,6 +15,8 @@ $ docker run -t alextanhongpin/haskell-demo
 ## Stack
 
 ```
+$ stack docker pull
+
 $ stack build
 
 $ stack install

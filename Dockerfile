@@ -1,9 +1,8 @@
 # Use Alpine Linux as base image
 FROM alpine:latest
 
-# Install libpq and gmp dependencies (dynamic libraries required by the project)
+# Install libpq and gmp dependencies (dynamic libraries required by the project) 
 RUN apk update && apk add libpq gmp
-
 
 # Copy the prebuilt binary from stack-work into the container
 # (substitute your project name for 'example')
