@@ -57,7 +57,6 @@ extra-package-dbs: []
 # Override the architecture used by stack, especially useful on Windows
 # arch: i386
 arch: x86_64
-# os: linux
 #
 # Extra directories used by stack for building
 # extra-include-dirs: [/path/to/dir]
@@ -66,24 +65,18 @@ arch: x86_64
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
 
-# Deploy to docker
-# image:
-#   containers:
-#     - 
-#       base
 # system-ghc: false
 docker:
-  enable: true
-  # set-user: true
-  # stack-exe: host
-  auto-pull: true
+  enable: true # Build the haskell app using the docker image
+  auto-pull: true # Auto-pull the image if it doesn't exist, else stack docker pull
 
+# Deploy to docker
 image:
   containers:
     - 
-      name: haskell-docker
-      base: alpine:latest
+      name: ubuntu-hs # The name of your base image, can be anything
+      base: fpco/ubuntu-with-libgmp:14.04
       add:
         .stack-work/docker/_home/.local/bin/: /usr/local/bin/
       entrypoints: 
-      - haskell-docker-exe
+      - haskell-docker-exe # It has to be your project name + `-exe`
